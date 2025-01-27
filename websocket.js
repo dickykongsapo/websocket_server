@@ -19,29 +19,6 @@ let totalSize = 0;
 
 const sampleToken = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJsaW5rQHNhcG9zeXMuY29tIiwic2NvcGVzIjpbIlRFTkFOVF9BRE1JTiJdLCJ1c2VySWQiOiI0N2M1ZDU4MC1hYmU5LTExZWMtOTA3Zi0yMzQyYTNhNDM5MWQiLCJlbmFibGVkIjp0cnVlLCJpc1B1YmxpYyI6ZmFsc2UsInRlbmFudElkIjoiMmNhYzk0MDAtYWJlOS0xMWVjLTkwN2YtMjM0MmEzYTQzOTFkIiwiY3VzdG9tZXJJZCI6IjEzODE0MDAwLTFkZDItMTFiMi04MDgwLTgwODA4MDgwODA4MCIsImlzcyI6InRoaW5nc2JvYXJkLmlvIiwiaWF0IjoxNzM0MzQzNTc0LCJleHAiOjE3MzQzNTI1NzR9._cSGenQEeeroPO5YEAIR61k13_UU57BGrA0-6f7up58IAfVzOpQ7S8IdavCiuf_KWcRM-8eO1IMGMGdiehpN3g'
 
-const handleMessage = (bytes, uuid) => {
-    const message = JSON.parse(bytes.toString())
-    console.log('message: ', message)
-
-    if (message.type === "access_token") {
-        connection.authenticated = authenticate(message.token)
-        return
-    }
-
-    if (connection.authenticated) {
-    } else {
-        connection.terminate()
-    }
-}
-
-
-const authenticate = token => {
-    if (token === sampleToken) {
-        return true
-    }
-}
-
-
 //Websocket Server
 const initWebSocket = (websocket_port) => {
     let clientMap = new Map()
@@ -52,90 +29,16 @@ const initWebSocket = (websocket_port) => {
     socketServer.on('connection', function (socket, upgradeReq) {
         let url = upgradeReq.socket.remoteAddress + upgradeReq.url;
         console.log(url)
-        // var token = URL.parse(upgradeReq.url, true).query.token;
-
-        // jwt.verify(token, jwtSecret, (err, decoded) => {
-        //     if (err) {
-        //         socket.close();
-        //     }
-        // });
 
         let key = url.substr(1).split('/')[1];
         var clients = clientMap.get(key);
         // console.log(url + '\n')
         console.log(key + '\n')
 
-        // console.log(clients + '\n')
         if (!clients) {
             clients = new Set();
             clientMap.set(key, clients);
         }
-
-        // console.log(clientMap + '\n')
-
-        //Trial 1
-        // if (url.includes('?')) {
-        //     let token = url.substr(1).split('/')[1].split('?')[1].substr(6)
-        //     if (token == sampleToken) {
-        //         console.log('samesssss')
-        //         // socket.response('success')
-        //         // clients.add(socket);
-        //         // totalSize++;
-
-        //         // socket.response('no')
-        //     } else {
-        //         clientMap.delete(key)
-        //         // socket.response()
-        //     }
-        // } else {
-        // }
-
-
-        //Trial 2
-        // socket.on('message', bytes => {
-        //     const message = bytes.toString()
-        //     socket.authenticated = authenticate(message)
-
-        //     if (socket.authenticated) {
-        //         // let key = url.substr(1).split('/')[1].split('?')[0];
-
-        //         let clients = clientMap.get(key);
-        //         if (!clients) {
-        //             clients = new Set();
-        //             clientMap.set(key, clients);
-        //         }
-
-
-        //         // // console.log(key)
-        //         // if (url.includes('?')) {
-        //         //     let token = url.substr(1).split('/')[1].split('?')[1].substr(6)
-        //         //     console.log(token)
-        //         //     if (token == sampleToken) {
-        //         //         console.log('samesssss')
-        //         //         clients.add(socket);
-
-        //         //         // socket.response('no')
-        //         //     } else {
-        //         //         clientMap.delete(key)
-        //         //         // socket.response()
-        //         //     }
-        //         // } else {
-        //         //     clients.add(socket);
-        //         // }
-        //         clients.add(socket);
-
-        //         totalSize++;
-        //         process.stdout.write("[INFO]:a new connection, the current number of connections: " + totalSize + ".\r");
-
-        //     } else {
-        //         socket.send('fail')
-
-        //         socket.terminate()
-        //     }
-        // }
-
-        // )
-
 
         //Original
         clients.add(socket);
@@ -195,11 +98,6 @@ const initWebSocket = (websocket_port) => {
 
 //http server, receive ffmpeg
 const initHttp = (stream_port, stream_secret, record_stream, socketServer) => {
-    // console.log('stream port', stream_port + '\n')
-    // console.log('stream_secret', stream_secret + '\n')
-
-    // console.log('record_stream', record_stream + '\n')
-
     let streamServer1 = http.createServer(
         (request, response) => {
             let params = request.url.substr(1).split('/');
@@ -243,8 +141,6 @@ const initHttp = (stream_port, stream_secret, record_stream, socketServer) => {
     ).listen()
     console.log('started rtsp WebSocket service in secret is [%s], service port is [%s], ws port is [%s].', stream_secret, stream_port, websocket_port);
 }
-
-
 
 const webSocketServer = initWebSocket(websocket_port);
 

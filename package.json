@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "child-process-promise": "^2.2.1",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2"
   }
