@@ -53,6 +53,7 @@ app.get('/express/ipcam', (req, res) => {
             const url = 'rtsp://admin:SaboatP0SYS@161.81.253.105/ISAPI/Streaming/channels/101/live'
             const target = 'http://127.0.0.1:8081/supersecret/live1'
             spawn = cp.spawn('ffmpeg', ['-i', url, '-q', '0', '-f', 'mpegts', '-codec:v', 'mpeg1video', '-s', '600x400', target])
+
             spawn.stdout.on("data", data => {
                 console.log(`stdout: ${data}`);
             });
